@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Question or Discussion
+    url: https://github.com/dimanjet/piicloak/discussions
+    about: Ask questions and discuss ideas
+  - name: Security Vulnerability
+    url: https://github.com/dimanjet/piicloak/security/advisories/new
+    about: Report a security vulnerability privately
