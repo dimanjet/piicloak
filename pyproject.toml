@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "piicloak"
-version = "1.0.0"
-description = "Enterprise-grade PII detection and anonymization API. GDPR/CCPA compliant. Supports 31 entity types."
+version = "1.0.1"
+description = "Enterprise-grade PII detection and anonymization API. Helps achieve GDPR/CCPA compliance. Supports 31 entity types."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"

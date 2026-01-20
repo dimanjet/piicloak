@@ -11,7 +11,7 @@
 
 **Enterprise-grade PII detection and anonymization API**
 
-Fast · Accurate · GDPR/CCPA Compliant · 31 Entity Types
+Fast · Accurate · GDPR/CCPA Ready · 31 Entity Types
 
 [Quick Start](#-quick-start) · [Documentation](#-documentation) · [Use Cases](#-use-cases) · [API Reference](#-api-reference)
 
