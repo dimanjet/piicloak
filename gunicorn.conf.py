@@ -39,3 +39,15 @@ tmp_upload_dir = None
 limit_request_line = 4094
 limit_request_fields = 100
 limit_request_field_size = 8190
+
+# Hooks - print version on startup
+def when_ready(server):
+    try:
+        from piicloak import __version__
+        version = __version__
+    except ImportError:
+        version = "unknown"
+    server.log.info("=" * 50)
+    server.log.info(f"PIICloak v{version}")
+    server.log.info("Enterprise PII Detection & Anonymization API")
+    server.log.info("=" * 50)

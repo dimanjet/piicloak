@@ -15,6 +15,7 @@ Or:
 """
 
 import sys
+from . import __version__
 from .config import HOST, PORT, DEBUG, LOG_LEVEL
 from .engine import create_analyzer, create_anonymizer, load_spacy_model
 from .api import create_app
@@ -39,7 +40,7 @@ def create_application():
 def main():
     """Main entry point for the service."""
     print("=" * 70)
-    print("PIICloak - Enterprise PII Detection & Anonymization API")
+    print(f"PIICloak v{__version__} - Enterprise PII Detection & Anonymization API")
     print("=" * 70)
     
     app = create_application()
@@ -52,6 +53,7 @@ def main():
     print("  GET  /metrics        - Prometheus metrics")
     print("  GET  /health         - Health check")
     print(f"\nSupported entities: {len(SUPPORTED_ENTITIES)}")
+    print(f"Version: {__version__}")
     print("=" * 70)
     print(f"\n🚀 Server starting on http://{HOST}:{PORT}")
     print(f"📊 Log level: {LOG_LEVEL}")

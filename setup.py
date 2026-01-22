@@ -20,7 +20,7 @@ if requirements_path.exists():
 
 setup(
     name="piicloak",
-    version="1.0.3",
+    version="1.0.4",
     author="Dmitry Marinov",
     author_email="marinovdk@gmail.com",
     description="Enterprise-grade PII detection and anonymization API. Helps achieve GDPR/CCPA compliance. Supports 31 entity types.",

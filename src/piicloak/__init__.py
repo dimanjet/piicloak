@@ -4,7 +4,7 @@ PIICloak - Enterprise-grade PII detection and anonymization API.
 Optimized for Salesforce data and legal documents.
 """
 
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 __author__ = "Dmitry Marinov"
 __license__ = "MIT"
 

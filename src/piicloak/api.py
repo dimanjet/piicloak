@@ -6,6 +6,7 @@ import io
 from flask import Flask, request, jsonify, Response
 from presidio_anonymizer.entities import OperatorConfig
 
+from . import __version__
 from .config import DEFAULT_SCORE_THRESHOLD, DEFAULT_MODE, ANONYMIZATION_MODES, ENABLE_METRICS
 from .recognizers import SUPPORTED_ENTITIES
 from .middleware import setup_middleware
@@ -52,7 +53,7 @@ def create_app(analyzer, anonymizer) -> Flask:
         return jsonify({
             "status": "ok", 
             "service": "piicloak",
-            "version": "1.0.0",
+            "version": __version__,
             "endpoints": {
                 "anonymize": "/anonymize",
                 "analyze": "/analyze",
