@@ -48,6 +48,10 @@ export PIICLOAK_LOG_FORMAT=json
 |----------|---------|-------------|
 | `PIICLOAK_SPACY_MODEL` | `en_core_web_lg` | spaCy model name |
 | `PIICLOAK_DEFAULT_LANGUAGE` | `en` | Default language for analysis |
+| `PIICLOAK_DETECTOR_BACKEND` | `presidio` | Detector backend: `presidio` or `privacy-filter` |
+| `PIICLOAK_PRIVACY_FILTER_CHECKPOINT` | `""` | Privacy Filter checkpoint path |
+| `PIICLOAK_PRIVACY_FILTER_ALLOW_DOWNLOAD` | `false` | Allow Privacy Filter to download its default checkpoint |
+| `PIICLOAK_PRIVACY_FILTER_DEVICE` | `cpu` | Privacy Filter inference device |
 
 **Supported spaCy Models:**
 - `en_core_web_sm` - Small (faster, less accurate)
@@ -60,6 +64,25 @@ export PIICLOAK_LOG_FORMAT=json
 export PIICLOAK_SPACY_MODEL=en_core_web_md
 python -m piicloak
 ```
+
+The full API/server uses the Presidio backend by default and requires a spaCy model. The local
+`piicloak redact --profile secrets` command is a regex-only path and does not load the spaCy model or
+an OpenAI Privacy Filter checkpoint.
+
+To use the optional Privacy Filter backend on Python 3.10+:
+
+```bash
+pip install "git+https://github.com/openai/privacy-filter.git@f7f00ca7fb869683eb732c010299d901457f19c3"
+export PIICLOAK_DETECTOR_BACKEND=privacy-filter
+export PIICLOAK_PRIVACY_FILTER_CHECKPOINT=/path/to/privacy_filter_checkpoint
+python -m piicloak
+```
+
+Install OpenAI's official `openai/privacy-filter` package source on Python 3.10+. Do not use the
+unrelated `privacy-filter` package published on PyPI.
+
+If no checkpoint is configured, PIICloak refuses to trigger Privacy Filter's default model download
+unless `PIICLOAK_PRIVACY_FILTER_ALLOW_DOWNLOAD=true` is set explicitly.
 
 ---
 

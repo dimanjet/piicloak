@@ -17,6 +17,12 @@ LOG_FORMAT = os.getenv("PIICLOAK_LOG_FORMAT", "json")  # json or text
 # NLP configuration
 SPACY_MODEL = os.getenv("PIICLOAK_SPACY_MODEL", "en_core_web_lg")
 DEFAULT_LANGUAGE = os.getenv("PIICLOAK_DEFAULT_LANGUAGE", "en")
+DETECTOR_BACKEND = os.getenv("PIICLOAK_DETECTOR_BACKEND", "presidio")
+PRIVACY_FILTER_CHECKPOINT = os.getenv("PIICLOAK_PRIVACY_FILTER_CHECKPOINT", "")
+PRIVACY_FILTER_ALLOW_DOWNLOAD = (
+    os.getenv("PIICLOAK_PRIVACY_FILTER_ALLOW_DOWNLOAD", "false").lower() == "true"
+)
+PRIVACY_FILTER_DEVICE = os.getenv("PIICLOAK_PRIVACY_FILTER_DEVICE", "cpu")
 
 # Detection configuration
 DEFAULT_SCORE_THRESHOLD = float(os.getenv("PIICLOAK_SCORE_THRESHOLD", "0.4"))

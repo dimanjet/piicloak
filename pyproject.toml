@@ -52,7 +52,6 @@ dev = [
 production = [
     "gunicorn>=21.0.0",
 ]
-
 [project.scripts]
 piicloak = "piicloak.__main__:main"
 

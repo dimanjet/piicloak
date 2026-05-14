@@ -5,6 +5,20 @@ All notable changes to PIICloak will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- Optional OpenAI Privacy Filter detector backend for users who install OpenAI's official
+  `openai/privacy-filter` package source on Python 3.10+.
+- `PIICLOAK_DETECTOR_BACKEND`, `PIICLOAK_PRIVACY_FILTER_CHECKPOINT`,
+  `PIICLOAK_PRIVACY_FILTER_ALLOW_DOWNLOAD`, and `PIICLOAK_PRIVACY_FILTER_DEVICE` settings.
+
+### Documentation
+
+- Clarified that the full Presidio API/server requires a spaCy model, while
+  `piicloak redact --profile secrets` is regex-only and does not load spaCy or Privacy Filter.
+
 ## [1.0.0] - 2026-01-20
 
 ### Added

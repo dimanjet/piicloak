@@ -267,12 +267,18 @@ curl -X POST http://localhost:8000/anonymize/docx \
 # Basic installation
 pip install piicloak
 
-# Download NLP model (required)
+# Download NLP model (required for the full API/server Presidio backend)
 python -m spacy download en_core_web_lg
 
 # Or install everything at once
 pip install piicloak && python -m spacy download en_core_web_lg
+
+# Optional OpenAI Privacy Filter backend from the official OpenAI repository (Python 3.10+)
+pip install "git+https://github.com/openai/privacy-filter.git@f7f00ca7fb869683eb732c010299d901457f19c3"
 ```
+
+`piicloak redact --profile secrets` is a lightweight regex-only file redaction path. It does not load
+the spaCy model and does not require or download an OpenAI Privacy Filter checkpoint.
 
 ### Configuration
 
@@ -286,6 +292,10 @@ All settings use the `PIICLOAK_` prefix and have sensible defaults:
 | `PIICLOAK_WORKERS` | `4` | Gunicorn workers |
 | `PIICLOAK_LOG_LEVEL` | `INFO` | Logging level |
 | `PIICLOAK_SPACY_MODEL` | `en_core_web_lg` | spaCy model |
+| `PIICLOAK_DETECTOR_BACKEND` | `presidio` | Detector backend: `presidio` or `privacy-filter` |
+| `PIICLOAK_PRIVACY_FILTER_CHECKPOINT` | `""` | Privacy Filter checkpoint path |
+| `PIICLOAK_PRIVACY_FILTER_ALLOW_DOWNLOAD` | `false` | Allow Privacy Filter to download its default checkpoint |
+| `PIICLOAK_PRIVACY_FILTER_DEVICE` | `cpu` | Privacy Filter inference device |
 | `PIICLOAK_SCORE_THRESHOLD` | `0.4` | Min confidence score (0-1) |
 | `PIICLOAK_DEFAULT_MODE` | `replace` | Default anonymization mode |
 | `PIICLOAK_CORS_ORIGINS` | `*` | CORS allowed origins |
@@ -297,6 +307,17 @@ Example:
 ```bash
 export PIICLOAK_PORT=9000
 export PIICLOAK_API_KEY=your-secret-key
+python -m piicloak
+```
+
+To use the optional Privacy Filter backend on Python 3.10+, install OpenAI's official
+`openai/privacy-filter` package source, not the unrelated `privacy-filter` package on PyPI. Then set an
+explicit checkpoint path, or opt into the upstream default checkpoint download:
+
+```bash
+pip install "git+https://github.com/openai/privacy-filter.git@f7f00ca7fb869683eb732c010299d901457f19c3"
+export PIICLOAK_DETECTOR_BACKEND=privacy-filter
+export PIICLOAK_PRIVACY_FILTER_CHECKPOINT=/path/to/privacy_filter_checkpoint
 python -m piicloak
 ```
 
