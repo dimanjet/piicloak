@@ -14,7 +14,6 @@ Or:
     app.run()
 """
 
-import sys
 from . import __version__
 from .config import DETECTOR_BACKEND, HOST, PORT, DEBUG, LOG_LEVEL
 from .engine import create_anonymizer, create_detector_backend, load_spacy_model

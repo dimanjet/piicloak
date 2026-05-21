@@ -4,7 +4,7 @@ PIICloak command-line entry point.
 
 Usage:
     python -m piicloak
-    
+
 Environment variables:
     PIICLOAK_PORT=8000
     PIICLOAK_HOST=0.0.0.0
@@ -26,5 +26,5 @@ def main():
     _serve()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

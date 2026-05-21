@@ -12,6 +12,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
 def nlp():
     """Load spaCy model once for all tests."""
     import spacy
+
     return spacy.load("en_core_web_lg")
 
 
@@ -19,6 +20,7 @@ def nlp():
 def analyzer(nlp):
     """Create analyzer engine once for all tests."""
     from piicloak.engine import create_analyzer
+
     return create_analyzer(nlp)
 
 
@@ -26,6 +28,7 @@ def analyzer(nlp):
 def anonymizer():
     """Create anonymizer engine once for all tests."""
     from piicloak.engine import create_anonymizer
+
     return create_anonymizer()
 
 
@@ -33,8 +36,9 @@ def anonymizer():
 def app(analyzer, anonymizer):
     """Create Flask app for testing."""
     from piicloak.api import create_app
+
     app = create_app(analyzer, anonymizer)
-    app.config['TESTING'] = True
+    app.config["TESTING"] = True
     return app
 
 
