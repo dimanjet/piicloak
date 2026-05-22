@@ -167,10 +167,26 @@ The workflow will:
 3. Build and check the wheel/sdist.
 4. Create the GitHub release with generated notes and distribution assets.
 5. Publish the same distributions to PyPI.
+6. Build a multi-arch (`linux/amd64`, `linux/arm64`) Docker image and push
+   `dimanjet/piicloak:<version>` and `dimanjet/piicloak:latest` to Docker Hub.
 
 If a tag already exists without a GitHub release, run the `Release` workflow manually from GitHub Actions and provide the existing tag name.
 
-Docker images are still published manually with the Docker commands above.
+### Docker Hub setup (one-time)
+
+The `docker` job in `publish.yml` needs two repository secrets and a GitHub
+environment:
+
+1. Create a Docker Hub access token:
+   - Go to https://app.docker.com/settings/personal-access-tokens
+   - Click **Generate new token**, scope **Read, Write, Delete**, name it e.g. `piicloak-ci`.
+   - Copy the token (shown only once).
+2. Add repository secrets at
+   https://github.com/dimanjet/piicloak/settings/secrets/actions :
+   - `DOCKERHUB_USERNAME` → your Docker Hub username (e.g. `dimanjet`).
+   - `DOCKERHUB_TOKEN` → the access token from step 1.
+3. Create the `dockerhub` environment at
+   https://github.com/dimanjet/piicloak/settings/environments → **New environment** → name `dockerhub`. No protection rules required (optional: add a deployment branch rule restricting to tags matching `v*` and/or required reviewers).
 
 ---
 
