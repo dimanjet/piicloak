@@ -139,91 +139,93 @@ curl http://localhost:5050/health
 
 ## 🤖 Automated Publishing (GitHub Actions)
 
-`.github/workflows/publish.yml` runs the release flow when a version tag is pushed.
+Releases are fully automated by two workflows:
 
-### PyPI setup
+- `.github/workflows/release-please.yml` — runs on every push to `main`.
+  Maintains a **release PR** that bumps the version in `pyproject.toml` and
+  `src/piicloak/__init__.py` and updates `docs/CHANGELOG.md` based on
+  [Conventional Commits](https://www.conventionalcommits.org/) since the last
+  release. Merging that PR creates the `vX.Y.Z` git tag and the GitHub release
+  with auto-generated notes.
+- `.github/workflows/publish.yml` — runs when a `vX.Y.Z` tag is pushed.
+  Validates → lint/format/tests → builds wheel + sdist → uploads them to the
+  GitHub release → publishes to PyPI via Trusted Publishing → builds multi-arch
+  Docker image (`linux/amd64`, `linux/arm64`) and pushes
+  `dimanjet/piicloak:<version>` + `:latest` to Docker Hub → syncs `README.md`
+  to the Docker Hub repository overview.
 
-Use PyPI Trusted Publishing instead of a long-lived API token:
+### Release flow (for contributors)
 
-1. Go to the PyPI project publishing settings.
-2. Add a trusted publisher for this GitHub repository.
-3. Use workflow name `publish.yml` and environment name `pypi`.
-4. In GitHub, create the `pypi` environment under Settings → Environments.
+1. Use Conventional Commit messages on PRs into `main`:
+   - `feat: …` → minor version bump (`1.2.x` → `1.3.0`)
+   - `fix: …` → patch bump (`1.2.0` → `1.2.1`)
+   - `feat!: …` or `BREAKING CHANGE:` in body → major bump
+   - `chore: …`, `docs: …`, `ci: …`, `refactor: …`, `test: …` → no release on
+     their own, but show up under their category in the changelog.
+2. After your PR merges, the **release-please** workflow opens or updates a PR
+   titled e.g. `chore(main): release 1.3.0`. Review it like any other PR — it
+   contains the proposed version bumps + `CHANGELOG.md` diff.
+3. Merge the release PR. release-please creates the tag and the GitHub release,
+   which triggers `publish.yml` to push the build to PyPI and Docker Hub.
 
-No `PYPI_API_TOKEN` repository secret is required for this workflow.
+No manual version edits, no `git tag` commands.
 
-### Release a version
+### PyPI setup (one-time)
 
-```bash
-# Update version in pyproject.toml and src/piicloak/__init__.py first.
-git tag -a v1.1.0 -m "v1.1.0"
-git push origin v1.1.0
-```
+Uses PyPI Trusted Publishing — no long-lived token:
 
-The workflow will:
-
-1. Verify the tag matches the package version.
-2. Run lint, format, and tests.
-3. Build and check the wheel/sdist.
-4. Create the GitHub release with generated notes and distribution assets.
-5. Publish the same distributions to PyPI.
-6. Build a multi-arch (`linux/amd64`, `linux/arm64`) Docker image and push
-   `dimanjet/piicloak:<version>` and `dimanjet/piicloak:latest` to Docker Hub.
-
-If a tag already exists without a GitHub release, run the `Release` workflow manually from GitHub Actions and provide the existing tag name.
+1. At https://pypi.org/manage/project/piicloak/settings/publishing/ add a
+   trusted publisher:
+   - Owner: `dimanjet`
+   - Repository: `piicloak`
+   - Workflow name: `publish.yml`
+   - Environment name: `pypi`
+2. In GitHub, create the `pypi` environment at
+   https://github.com/dimanjet/piicloak/settings/environments (no protection
+   rules required).
 
 ### Docker Hub setup (one-time)
 
-The `docker` job in `publish.yml` needs two repository secrets and a GitHub
-environment:
+The `docker` job needs two repository secrets and a GitHub environment:
 
 1. Create a Docker Hub access token:
-   - Go to https://app.docker.com/settings/personal-access-tokens
-   - Click **Generate new token**, scope **Read, Write, Delete**, name it e.g. `piicloak-ci`.
+   - https://app.docker.com/settings/personal-access-tokens → **Generate new token**
+   - Scope: **Read, Write, Delete**. Name e.g. `piicloak-ci`.
    - Copy the token (shown only once).
 2. Add repository secrets at
    https://github.com/dimanjet/piicloak/settings/secrets/actions :
-   - `DOCKERHUB_USERNAME` → your Docker Hub username (e.g. `dimanjet`).
-   - `DOCKERHUB_TOKEN` → the access token from step 1.
+   - `DOCKERHUB_USERNAME` → `dimanjet`
+   - `DOCKERHUB_TOKEN` → the token from step 1.
 3. Create the `dockerhub` environment at
-   https://github.com/dimanjet/piicloak/settings/environments → **New environment** → name `dockerhub`. No protection rules required (optional: add a deployment branch rule restricting to tags matching `v*` and/or required reviewers).
+   https://github.com/dimanjet/piicloak/settings/environments → **New environment**
+   → name `dockerhub`. No protection rules required (optional: restrict
+   deployment branches to tags matching `v*` and/or add required reviewers).
+
+The Docker Hub repository overview (the page at
+https://hub.docker.com/r/dimanjet/piicloak) is rewritten from `README.md` on
+every release, so the Hub page can't drift from the repo README.
+
+### Re-running a release manually
+
+If a publish run fails (e.g. transient PyPI error), open the failed run on the
+Actions tab and click **Re-run failed jobs** — only the failed job and its
+dependants will rerun. The release tag and artifacts are already in place.
+
+To re-publish an existing tag from scratch, trigger the `Release` workflow
+manually with `workflow_dispatch` and pass the existing tag name (e.g.
+`v1.2.1`); the workflow will check out that tag and run end-to-end.
 
 ---
 
-## 📋 Release Checklist
+## 📋 Release Checklist (per release)
 
-Before publishing v1.0.0:
-
-- [ ] All tests passing (`make test`)
-- [ ] Version updated in `pyproject.toml` and `src/piicloak/__init__.py`
-- [ ] CHANGELOG.md updated
-- [ ] README.md reviewed
-- [ ] GitHub repo created and code pushed
-- [ ] GitHub release created with release notes
-- [ ] PyPI package published
-- [ ] Docker image published
-- [ ] Documentation updated
-- [ ] Tweet/blog post about the release
-
----
-
-## 🔄 Version Bumping
-
-For future releases:
-
-```bash
-# Update version in these files:
-# - pyproject.toml (version = "1.0.1")
-# - src/piicloak/__init__.py (__version__ = "1.0.1")
-
-# Commit and tag
-git add .
-git commit -m "Bump version to 1.0.1"
-git tag v1.0.1
-git push origin main --tags
-
-# GitHub Actions will create the GitHub release and publish to PyPI.
-```
+- [ ] All PRs into `main` use Conventional Commit messages.
+- [ ] release-please opened/updated a release PR.
+- [ ] Review the release PR diff (version bumps + CHANGELOG entry look right).
+- [ ] Merge the release PR.
+- [ ] Confirm the `publish.yml` run on the new tag finishes green.
+- [ ] Spot-check PyPI page, Docker Hub tags, and Docker Hub overview match the
+      new version.
 
 ---
 
